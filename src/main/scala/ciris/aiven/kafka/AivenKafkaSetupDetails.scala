@@ -14,17 +14,28 @@ sealed abstract case class AivenKafkaSetupDetails(
     def value: A = a
   }
 
+  val properties: Map[String, String] =
+    Map(
+      "security.protocol" -> "SSL",
+      "ssl.truststore.location" -> trustStoreFile.value.pathAsString,
+      "ssl.truststore.password" -> trustStorePassword.value,
+      "ssl.keystore.type" -> "PKCS12",
+      "ssl.keystore.location" -> keyStoreFile.value.pathAsString,
+      "ssl.keystore.password" -> keyStorePassword.value,
+      "ssl.key.password" -> keyStorePassword.value
+    )
+
   def setProperties[A](a: A)(f: (A, String, String) => A): A = {
-    new WithProperty(a)(f)
-      .withProperty("security.protocol", "SSL")
-      .withProperty("ssl.truststore.location", trustStoreFile.value.pathAsString)
-      .withProperty("ssl.truststore.password", trustStorePassword.value)
-      .withProperty("ssl.keystore.type", "PKCS12")
-      .withProperty("ssl.keystore.location", keyStoreFile.value.pathAsString)
-      .withProperty("ssl.keystore.password", keyStorePassword.value)
-      .withProperty("ssl.key.password", keyStorePassword.value)
+    properties.toList
+      .foldLeft(new WithProperty(a)(f)) {
+        case (a, (key, value)) =>
+          a.withProperty(key, value)
+      }
       .value
   }
+
+  def setProperties[A](f: Map[String, String] => A): A =
+    f(properties)
 }
 
 object AivenKafkaSetupDetails {
