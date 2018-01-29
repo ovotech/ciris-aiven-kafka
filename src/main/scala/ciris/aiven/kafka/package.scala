@@ -10,42 +10,50 @@ import scala.util.{Failure, Success, Try}
 
 package object kafka {
   implicit val aivenKafkaClientPrivateKeyConfigReader: ConfigReader[AivenKafkaClientPrivateKey] =
-    ConfigReader.fromTry("AivenClientPrivateKey")(AivenKafkaClientPrivateKey.fromString)
+    ConfigReader.fromTry("AivenKafkaClientPrivateKey")(AivenKafkaClientPrivateKey.fromString)
 
   implicit val aivenKafkaClientCertificateConfigReader: ConfigReader[AivenKafkaClientCertificate] =
-    ConfigReader.fromTry("AivenClientCertificate")(AivenKafkaClientCertificate.fromString)
+    ConfigReader.fromTry("AivenKafkaClientCertificate")(AivenKafkaClientCertificate.fromString)
+
+  implicit val aivenKafkaServiceCertificateConfigReader: ConfigReader[AivenKafkaServiceCertificate] =
+    ConfigReader.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString)
 
   def aivenKafkaSetup(
-    privateKey: ConfigValue[AivenKafkaClientPrivateKey],
-    certificate: ConfigValue[AivenKafkaClientCertificate]
+    clientPrivateKey: ConfigValue[AivenKafkaClientPrivateKey],
+    clientCertificate: ConfigValue[AivenKafkaClientCertificate],
+    serviceCertificate: ConfigValue[AivenKafkaServiceCertificate]
   ): ConfigValue[AivenKafkaSetupDetails] = ConfigValue {
-    (privateKey.value, certificate.value) match {
-      case (Right(privateKey), Right(certificate)) =>
-        setupKeyAndTrustStores(privateKey, certificate)
-      case (Left(error1), Left(error2)) => Left(error1 combine error2)
-      case (Left(error1), Right(_))     => Left(error1)
-      case (Right(_), Left(error2))     => Left(error2)
+    (clientPrivateKey.value, clientCertificate.value, serviceCertificate.value) match {
+      case (Right(clientPrivateKey), Right(clientCertificate), Right(serviceCertificate)) =>
+        setupKeyAndTrustStores(clientPrivateKey, clientCertificate, serviceCertificate)
+      case _ =>
+        Left {
+          List(clientPrivateKey.value, clientCertificate.value, serviceCertificate.value)
+            .collect { case Left(error) => error }
+            .reduce(_ combine _)
+        }
     }
   }
 
   private def setupKeyAndTrustStores(
-    privateKey: AivenKafkaClientPrivateKey,
-    certificate: AivenKafkaClientCertificate
+    clientPrivateKey: AivenKafkaClientPrivateKey,
+    clientCertificate: AivenKafkaClientCertificate,
+    serviceCertificate: AivenKafkaServiceCertificate
   ): Either[ConfigError, AivenKafkaSetupDetails] = {
     val setupDetails =
       AivenKafkaSetupDetails.newTemporary()
 
     def keyStoreSetup() =
       setupKeyStore(
-        privateKey = privateKey,
-        certificate = certificate,
+        clientPrivateKey = clientPrivateKey,
+        clientCertificate = clientCertificate,
         keyStoreFile = setupDetails.keyStoreFile,
         keyStorePassword = setupDetails.keyStorePassword
       )
 
     def trustStoreSetup() =
       setupTrustStore(
-        certificate = certificate,
+        serviceCertificate = serviceCertificate,
         trustStoreFile = setupDetails.trustStoreFile,
         trustStorePassword = setupDetails.trustStorePassword
       )
@@ -79,8 +87,8 @@ package object kafka {
   }
 
   private def setupKeyStore(
-    privateKey: AivenKafkaClientPrivateKey,
-    certificate: AivenKafkaClientCertificate,
+    clientPrivateKey: AivenKafkaClientPrivateKey,
+    clientCertificate: AivenKafkaClientCertificate,
     keyStoreFile: AivenKafkaKeyStoreFile,
     keyStorePassword: AivenKafkaKeyStorePassword
   ): Try[Unit] = {
@@ -95,8 +103,8 @@ package object kafka {
       store.setEntry(
         "service_key",
         new PrivateKeyEntry(
-          privateKey.value,
-          Array(certificate.value)
+          clientPrivateKey.value,
+          Array(clientCertificate.value)
         ),
         new PasswordProtection(keyStorePasswordChars)
       )
@@ -104,7 +112,7 @@ package object kafka {
   }
 
   private def setupTrustStore(
-    certificate: AivenKafkaClientCertificate,
+    serviceCertificate: AivenKafkaServiceCertificate,
     trustStoreFile: AivenKafkaTrustStoreFile,
     trustStorePassword: AivenKafkaTrustStorePassword
   ): Try[Unit] = {
@@ -112,6 +120,6 @@ package object kafka {
       storeType = "JKS",
       storeFile = trustStoreFile.value,
       storePasswordChars = trustStorePassword.value.toCharArray
-    ) { _.setCertificateEntry("CA", certificate.value) }
+    ) { _.setCertificateEntry("CA", serviceCertificate.value) }
   }
 }

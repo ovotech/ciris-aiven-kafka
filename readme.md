@@ -28,8 +28,9 @@ final case class Config(
 val config =
   loadConfig(
     aivenKafkaSetup(
-      privateKey = fileWithName("/tmp/service.key"), // Private key type is inferred
-      certificate = fileWithName("/tmp/service.cert") // Certificate type is inferred
+      clientPrivateKey = fileWithName("/tmp/service.key"), // Client private key type is inferred
+      clientCertificate = fileWithName("/tmp/service.cert"), // Client certificate type is inferred
+      serviceCertificate = fileWithName("/tmp/ca.cert") // Service certificate type is inferred
     )
   ) { kafkaSetup =>
     Config(
@@ -44,9 +45,9 @@ The `loadConfig` method returns an `Either[ConfigErrors, Config]`, and we can qu
 ```scala
 config.orThrow()
 // ciris.ConfigException: configuration loading failed with the following errors.
-// 
-//   - Exception while reading file [(/tmp/service.key,UTF-8)]: java.io.FileNotFoundException: /tmp/service.key (No such file or directory), Exception while reading file [(/tmp/service.cert,UTF-8)]: java.io.FileNotFoundException: /tmp/service.cert (No such file or directory).
-// 
+//
+//   - Exception while reading file [(/tmp/service.key,UTF-8)]: java.io.FileNotFoundException: /tmp/service.key (No such file or directory)
+//
 //   at ciris.ConfigException$.apply(ConfigException.scala:33)
 //   at ciris.ConfigErrors$.toException$extension(ConfigErrors.scala:109)
 //   at ciris.syntax$EitherConfigErrorsSyntax$.$anonfun$orThrow$1(syntax.scala:22)
