@@ -7,13 +7,13 @@ To get started with [SBT][sbt], simply add the following lines to your `build.sb
 ```scala
 resolvers += Resolver.bintrayRepo("ovotech", "maven")
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "0.2"
+libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "0.3"
 ```
 
 The library is published for Scala 2.11 and 2.12.
 
 ### Usage
-Simply `import ciris.aiven.kafka._` and use the `aivenKafkaSetup` function to setup the key and trust store for the specified client private key and certificate. The library provides support for reading the private key and certificate, so all you have to do is to say from which source they should be retrieved.
+Simply `import ciris.aiven.kafka._` and use the `aivenKafkaSetup` function to setup the key and trust store for the specified client private key, client certificate, and service certificate. The library provides support for reading the private key and certificates, so all you have to do is to say from which source they should be retrieved.
 
 ```scala
 import ciris._
@@ -30,7 +30,7 @@ val config =
     aivenKafkaSetup(
       clientPrivateKey = fileWithName("/tmp/service.key"), // Client private key type is inferred
       clientCertificate = fileWithName("/tmp/service.cert"), // Client certificate type is inferred
-      serviceCertificate = fileWithName("/tmp/ca.cert") // Service certificate type is inferred
+      serviceCertificate = fileWithName("/tmp/ca.pem") // Service certificate type is inferred
     )
   ) { kafkaSetup =>
     Config(
