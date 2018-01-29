@@ -1,0 +1,5 @@
+### Changes
+- Add `AivenKafkaSetupDetails#setProperties(Map[String, String] => A)`.
+- Add `AivenKafkaSetupDetails#properties`.
+
+Released on 2018-01-29.
