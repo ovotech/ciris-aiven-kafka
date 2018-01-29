@@ -1,0 +1,4 @@
+### Changes
+- Fix missing service certificate parameter on `aivenKafkaSetup`.
+
+Released on 2018-01-29.
