@@ -7,7 +7,7 @@ To get started with [SBT][sbt], simply add the following lines to your `build.sb
 ```scala
 resolvers += Resolver.bintrayRepo("ovotech", "maven")
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "0.1"
+libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "0.2"
 ```
 
 The library is published for Scala 2.11 and 2.12.
@@ -58,14 +58,18 @@ config.orThrow()
 
 If the configuration loading was successful, `aivenKafkaSetup` will return an `AivenKafkaSetupDetails` with the key and trust store locations, and their passwords. Temporary files and passwords are used and the files are set to be deleted automatically on exit. The key store is of type PKCS12 and the trust store is of type JKS.
 
-`AivenKafkaSetupDetails` provides a `setProperties` function to configure Kafka consumers and producers. For example, if you're using [Akka Streams Kafka][akka-streams-kafka], you can configure your consumers and producers like in the following example.
+`AivenKafkaSetupDetails` provides a `setProperties` function to configure Kafka consumers and producers. For example, if you're using [Akka Streams Kafka][akka-streams-kafka], you can configure your consumers and producers like in the following example. You can also retrieve the Kafka properties as a `Map[String, String]` with `properties`.
 
 ```scala
 val kafkaSetup: AivenKafkaSetupDetails = ???
 
 val settings: ConsumerSettings[Key, Value] = ???
 
-kafkaSetup.setProperties(settings)(_ withProperty (_, _))
+// Using setProperties
+kafkaSetup.setProperties(settings.withProperties)
+
+// Using properties
+settings.withProperties(kafkaSetup.properties)
 ```
 
 [aiven]: https://aiven.io
