@@ -4,31 +4,33 @@ import java.security.KeyStore
 import java.security.KeyStore.{PasswordProtection, PrivateKeyEntry}
 
 import better.files._
-import ciris.{ConfigError, ConfigReader, ConfigValue}
+import ciris._
+import ciris.api._
+import ciris.api.syntax._
 
 import scala.util.{Failure, Success, Try}
 
 package object kafka {
-  implicit val aivenKafkaClientPrivateKeyConfigReader: ConfigReader[AivenKafkaClientPrivateKey] =
-    ConfigReader.fromTry("AivenKafkaClientPrivateKey")(AivenKafkaClientPrivateKey.fromString)
+  implicit val aivenKafkaClientPrivateKeyConfigDecoder: ConfigDecoder[String, AivenKafkaClientPrivateKey] =
+    ConfigDecoder.fromTry("AivenKafkaClientPrivateKey")(AivenKafkaClientPrivateKey.fromString)
 
-  implicit val aivenKafkaClientCertificateConfigReader: ConfigReader[AivenKafkaClientCertificate] =
-    ConfigReader.fromTry("AivenKafkaClientCertificate")(AivenKafkaClientCertificate.fromString)
+  implicit val aivenKafkaClientCertificateConfigDecoder: ConfigDecoder[String, AivenKafkaClientCertificate] =
+    ConfigDecoder.fromTry("AivenKafkaClientCertificate")(AivenKafkaClientCertificate.fromString)
 
-  implicit val aivenKafkaServiceCertificateConfigReader: ConfigReader[AivenKafkaServiceCertificate] =
-    ConfigReader.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString)
+  implicit val aivenKafkaServiceCertificateConfigDecoder: ConfigDecoder[String, AivenKafkaServiceCertificate] =
+    ConfigDecoder.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString)
 
-  def aivenKafkaSetup(
-    clientPrivateKey: ConfigValue[AivenKafkaClientPrivateKey],
-    clientCertificate: ConfigValue[AivenKafkaClientCertificate],
-    serviceCertificate: ConfigValue[AivenKafkaServiceCertificate]
-  ): ConfigValue[AivenKafkaSetupDetails] = ConfigValue {
-    (clientPrivateKey.value, clientCertificate.value, serviceCertificate.value) match {
-      case (Right(clientPrivateKey), Right(clientCertificate), Right(serviceCertificate)) =>
+  def aivenKafkaSetup[F[_]: Apply](
+    clientPrivateKey: ConfigValue[F, AivenKafkaClientPrivateKey],
+    clientCertificate: ConfigValue[F, AivenKafkaClientCertificate],
+    serviceCertificate: ConfigValue[F, AivenKafkaServiceCertificate]
+  ): ConfigValue[F, AivenKafkaSetupDetails] = ConfigValue.applyF {
+    (clientPrivateKey.value product clientCertificate.value product serviceCertificate.value).map {
+      case ((Right(clientPrivateKey), Right(clientCertificate)), Right(serviceCertificate)) =>
         setupKeyAndTrustStores(clientPrivateKey, clientCertificate, serviceCertificate)
-      case _ =>
+      case ((clientPrivateKey, clientCertificate), serviceCertificate) =>
         Left {
-          List(clientPrivateKey.value, clientCertificate.value, serviceCertificate.value)
+          List(clientPrivateKey, clientCertificate, serviceCertificate)
             .collect { case Left(error) => error }
             .reduce(_ combine _)
         }
