@@ -42,10 +42,7 @@ package object kafka {
     clientCertificate: AivenKafkaClientCertificate,
     serviceCertificate: AivenKafkaServiceCertificate
   ): Either[ConfigError, AivenKafkaSetupDetails] = {
-    val setupDetails =
-      AivenKafkaSetupDetails.newTemporary()
-
-    def keyStoreSetup() =
+    def keyStoreSetup(setupDetails: AivenKafkaSetupDetails) =
       setupKeyStore(
         clientPrivateKey = clientPrivateKey,
         clientCertificate = clientCertificate,
@@ -53,7 +50,7 @@ package object kafka {
         keyStorePassword = setupDetails.keyStorePassword
       )
 
-    def trustStoreSetup() =
+    def trustStoreSetup(setupDetails: AivenKafkaSetupDetails) =
       setupTrustStore(
         serviceCertificate = serviceCertificate,
         trustStoreFile = setupDetails.trustStoreFile,
@@ -62,12 +59,13 @@ package object kafka {
 
     val setupStores =
       for {
-        _ <- keyStoreSetup()
-        _ <- trustStoreSetup()
-      } yield ()
+        setupDetails <- AivenKafkaSetupDetails.newTemporary()
+        _ <- keyStoreSetup(setupDetails)
+        _ <- trustStoreSetup(setupDetails)
+      } yield setupDetails
 
     setupStores match {
-      case Success(_) =>
+      case Success(setupDetails) =>
         Right(setupDetails)
       case Failure(cause) =>
         Left(ConfigError(s"Failed to setup Aiven Kafka key and trust stores: $cause"))
