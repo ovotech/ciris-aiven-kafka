@@ -1,5 +1,7 @@
 package ciris.aiven.kafka
 
+import scala.util.Try
+
 sealed abstract case class AivenKafkaSetupDetails(
   keyStoreFile: AivenKafkaKeyStoreFile,
   keyStorePassword: AivenKafkaKeyStorePassword,
@@ -39,11 +41,16 @@ sealed abstract case class AivenKafkaSetupDetails(
 }
 
 object AivenKafkaSetupDetails {
-  def newTemporary(): AivenKafkaSetupDetails =
-    new AivenKafkaSetupDetails(
-      AivenKafkaKeyStoreFile.newTemporary(),
-      AivenKafkaKeyStorePassword.newTemporary(),
-      AivenKafkaTrustStoreFile.newTemporary(),
-      AivenKafkaTrustStorePassword.newTemporary()
-    ) {}
+  def newTemporary(): Try[AivenKafkaSetupDetails] =
+    for {
+      keyStoreFile <- AivenKafkaKeyStoreFile.newTemporary()
+      trustStoreFile <- AivenKafkaTrustStoreFile.newTemporary()
+    } yield {
+      new AivenKafkaSetupDetails(
+        keyStoreFile,
+        AivenKafkaKeyStorePassword.newTemporary(),
+        trustStoreFile,
+        AivenKafkaTrustStorePassword.newTemporary()
+      ) {}
+    }
 }
