@@ -1,0 +1,9 @@
+### Changes
+- Add missing `Try` wrappers for some Java file operations. ([#2][#2])
+
+### Updates
+- Update Ciris to v0.7.2. ([#2][#2])
+
+[#2]: https://github.com/ovotech/ciris-aiven-kafka/pull/2
+
+Released on 2018-02-15.
