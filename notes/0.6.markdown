@@ -1,0 +1,6 @@
+### Updates
+- Update Ciris to v0.8.1. ([#3][#3])
+
+[#3]: https://github.com/ovotech/ciris-aiven-kafka/pull/3
+
+Released on 2018-03-12.
