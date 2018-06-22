@@ -13,7 +13,7 @@ libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "0.8"
 The library is published for Scala 2.11 and 2.12.
 
 ### Usage
-Simply `import ciris.aiven.kafka._` and use the `aivenKafkaSetup` function to setup the key and trust stores for the specified client private key, client certificate, and service certificate. The library provides support for reading the private key and certificates, so all you have to do is to say from which source they should be retrieved. The example below makes use of [`IO`][IO] from [cats-effect][cats-effect], but any effect type with a [`Sync`][Sync] instance available works with the [`ciris-cats-effect`][ciris-cats-effect] module.
+Simply `import ciris.aiven.kafka._` and use the `aivenKafkaSetup` function to setup the key and trust stores for the specified client private key, client certificate, and service certificate. The library provides support for reading the private key and certificates, so all you have to do is to say from which source they should be retrieved. The example below makes use of [`IO`][IO] from [cats-effect][cats-effect], but any effect type with a [`Sync`][Sync] instance available works with [`ciris-cats-effect`][ciris-cats-effect].
 
 ```scala
 import cats.effect.IO
