@@ -10,5 +10,5 @@ scalacOptions += "-language:higherKinds"
 
 libraryDependencies ++= Seq(
   "is.cir" %% "ciris-core" % "0.10.0",
-  "com.github.pathikrit" %% "better-files" % "3.4.0"
+  "com.github.pathikrit" %% "better-files" % "3.5.0"
 )
