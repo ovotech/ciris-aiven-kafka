@@ -1,6 +1,7 @@
 package ciris.aiven.kafka
 
-import scala.util.Try
+import ciris.api.Sync
+import ciris.api.syntax._
 
 sealed abstract case class AivenKafkaSetupDetails(
   keyStoreFile: AivenKafkaKeyStoreFile,
@@ -8,7 +9,6 @@ sealed abstract case class AivenKafkaSetupDetails(
   trustStoreFile: AivenKafkaTrustStoreFile,
   trustStorePassword: AivenKafkaTrustStorePassword
 ) {
-
   private class WithProperty[A](a: A)(f: (A, String, String) => A) {
     def withProperty(key: String, value: String): WithProperty[A] =
       new WithProperty(f(a, key, value))(f)
@@ -41,16 +41,18 @@ sealed abstract case class AivenKafkaSetupDetails(
 }
 
 object AivenKafkaSetupDetails {
-  def newTemporary(): Try[AivenKafkaSetupDetails] =
+  def newTemporary[F[_]](implicit F: Sync[F]): F[AivenKafkaSetupDetails] =
     for {
-      keyStoreFile <- AivenKafkaKeyStoreFile.newTemporary()
-      trustStoreFile <- AivenKafkaTrustStoreFile.newTemporary()
+      keyStoreFile <- AivenKafkaKeyStoreFile.newTemporary[F]
+      keyStorePassword <- AivenKafkaKeyStorePassword.newTemporary[F]
+      trustStoreFile <- AivenKafkaTrustStoreFile.newTemporary[F]
+      trustStorePassword <- AivenKafkaTrustStorePassword.newTemporary[F]
     } yield {
       new AivenKafkaSetupDetails(
         keyStoreFile,
-        AivenKafkaKeyStorePassword.newTemporary(),
+        keyStorePassword,
         trustStoreFile,
-        AivenKafkaTrustStorePassword.newTemporary()
+        trustStorePassword
       ) {}
     }
 }
