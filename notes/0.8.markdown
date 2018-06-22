@@ -1,0 +1,14 @@
+### Changes
+- Change to require `Sync[F]` for `aivenKafkaSetup`. ([#7][#7])  
+  The [readme][usage] has been updated with an example.
+
+### Updates
+- Update better-files to v3.5.0. ([#6][#6])
+- Update Ciris to v0.10.0. ([#6][#6])
+- Update Scala to v2.12.6. ([#6][#6])
+
+[usage]: https://github.com/ovotech/ciris-aiven-kafka#usage
+[#6]: https://github.com/ovotech/ciris-aiven-kafka/pull/6
+[#7]: https://github.com/ovotech/ciris-aiven-kafka/pull/7
+
+Released on 2018-06-22.
