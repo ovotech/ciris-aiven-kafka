@@ -33,6 +33,7 @@ package object kafka {
               List(clientPrivateKey, clientCertificate, serviceCertificate)
                 .collect { case Left(error) => error }
                 .reduce(_ combine _)
+                .redactSensitive
             }
           }
       }
