@@ -1,0 +1,6 @@
+### Changes
+- Change to redact sensitive details in decoding errors. ([#8][#8])
+
+[#8]: https://github.com/ovotech/ciris-aiven-kafka/pull/8
+
+Released on 2018-06-23.
