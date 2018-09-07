@@ -1,0 +1,16 @@
+### Changes
+- Change to use SHA1 short hash in `toString` for key and certificates. ([#12][#12])
+
+### Updates
+- Update better-files to v3.6.0. ([#11][#11])
+- Update ciris to v0.11.0. ([#10][#10])
+
+### Miscellaneous
+- Update sbt and plugins to latest versions. ([#9][#9])
+
+[#9]: https://github.com/ovotech/ciris-aiven-kafka/pull/9
+[#10]: https://github.com/ovotech/ciris-aiven-kafka/pull/10
+[#11]: https://github.com/ovotech/ciris-aiven-kafka/pull/11
+[#12]: https://github.com/ovotech/ciris-aiven-kafka/pull/12
+
+Released on 2018-09-07.
