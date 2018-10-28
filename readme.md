@@ -65,7 +65,7 @@ config.unsafeRunSync()
 
 If the configuration loading was successful, `aivenKafkaSetup` will return an `AivenKafkaSetupDetails` with the key and trust store locations, and their passwords. Temporary files and passwords are used and the files are set to be deleted automatically on exit. The key store is of type PKCS12 and the trust store is of type JKS.
 
-`AivenKafkaSetupDetails` provides a `setProperties` function to configure Kafka consumers and producers. For example, if you're using [Alpakka Kafka][alpakka-kafka], you can configure your consumers and producers as follows. Properties as `Map[String, String`] are also available with `properties`.
+`AivenKafkaSetupDetails` provides a `setProperties` function to configure Kafka consumers and producers. For example, if you're using [Alpakka Kafka][alpakka-kafka], you can configure your consumers and producers as follows. Properties as `Map[String, String]` are also available with `properties`.
 
 ```scala
 val kafkaSetup: AivenKafkaSetupDetails = ???
