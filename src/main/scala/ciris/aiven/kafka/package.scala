@@ -10,13 +10,13 @@ import ciris.api.syntax._
 
 package object kafka {
   implicit val aivenKafkaClientPrivateKeyConfigDecoder: ConfigDecoder[String, AivenKafkaClientPrivateKey] =
-    ConfigDecoder.fromTry("AivenKafkaClientPrivateKey")(AivenKafkaClientPrivateKey.fromString)
+    ConfigDecoder.fromTry("AivenKafkaClientPrivateKey")(AivenKafkaClientPrivateKey.fromString).redactSensitive
 
   implicit val aivenKafkaClientCertificateConfigDecoder: ConfigDecoder[String, AivenKafkaClientCertificate] =
-    ConfigDecoder.fromTry("AivenKafkaClientCertificate")(AivenKafkaClientCertificate.fromString)
+    ConfigDecoder.fromTry("AivenKafkaClientCertificate")(AivenKafkaClientCertificate.fromString).redactSensitive
 
   implicit val aivenKafkaServiceCertificateConfigDecoder: ConfigDecoder[String, AivenKafkaServiceCertificate] =
-    ConfigDecoder.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString)
+    ConfigDecoder.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString).redactSensitive
 
   def aivenKafkaSetup[F[_]](
     clientPrivateKey: ConfigValue[F, AivenKafkaClientPrivateKey],
@@ -33,7 +33,6 @@ package object kafka {
               List(clientPrivateKey, clientCertificate, serviceCertificate)
                 .collect { case Left(error) => error }
                 .reduce(_ combine _)
-                .redactSensitive
             }
           }
       }
