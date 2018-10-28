@@ -1,0 +1,11 @@
+### Changes
+- Change to automatically redact any sensitive details in provided decoders.
+- Change to use SHA1 short hash in `toString` for key and trust store passwords.
+
+### Updates
+- Update scala to 2.12.7.
+
+### Miscellaneous
+- Update sbt to 1.2.6.
+
+Released on 2018-10-28.
