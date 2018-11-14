@@ -9,6 +9,6 @@ releaseCrossBuild := true
 scalacOptions += "-language:higherKinds"
 
 libraryDependencies ++= Seq(
-  "is.cir" %% "ciris-core" % "0.11.0",
+  "is.cir" %% "ciris-core" % "0.12.0",
   "com.github.pathikrit" %% "better-files" % "3.6.0"
 )
