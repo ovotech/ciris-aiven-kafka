@@ -19,19 +19,20 @@ package object kafka {
     ConfigDecoder.fromTry("AivenKafkaServiceCertificate")(AivenKafkaServiceCertificate.fromString).redactSensitive
 
   def aivenKafkaSetup[F[_]](
-    clientPrivateKey: ConfigValue[F, AivenKafkaClientPrivateKey],
-    clientCertificate: ConfigValue[F, AivenKafkaClientCertificate],
-    serviceCertificate: ConfigValue[F, AivenKafkaServiceCertificate]
-  )(implicit F: Sync[F]): ConfigValue[F, AivenKafkaSetupDetails] = ConfigValue.applyF {
-    (clientPrivateKey.value product clientCertificate.value product serviceCertificate.value)
+    clientPrivateKey: ConfigResult[F, AivenKafkaClientPrivateKey],
+    clientCertificate: ConfigResult[F, AivenKafkaClientCertificate],
+    serviceCertificate: ConfigResult[F, AivenKafkaServiceCertificate]
+  )(implicit F: Sync[F]): ConfigResult[F, AivenKafkaSetupDetails] = ConfigResult {
+    (clientPrivateKey.result product clientCertificate.result product serviceCertificate.result)
       .flatMap {
         case ((Right(clientPrivateKey), Right(clientCertificate)), Right(serviceCertificate)) =>
           setupKeyAndTrustStores(clientPrivateKey, clientCertificate, serviceCertificate)
+            .map(_.left.map(ConfigErrors(_)))
         case ((clientPrivateKey, clientCertificate), serviceCertificate) =>
           F.pure {
-            ConfigError.left {
+            ConfigErrors.left {
               List(clientPrivateKey, clientCertificate, serviceCertificate)
-                .collect { case Left(error) => error }
+                .collect { case Left(errors) => errors }
                 .reduce(_ combine _)
             }
           }
