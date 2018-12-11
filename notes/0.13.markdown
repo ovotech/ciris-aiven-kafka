@@ -1,0 +1,4 @@
+### Changes
+- Change to use `ConfigResult` instead of `ConfigValue`.
+
+Released on 2018-12-11.
