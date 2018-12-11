@@ -1,4 +1,6 @@
 ### Changes
-- Change to use `ConfigResult` instead of `ConfigValue`.
+- Change to use `ConfigResult` instead of `ConfigValue`. ([#13][#13])
+
+[#13]: https://github.com/ovotech/ciris-aiven-kafka/pull/13
 
 Released on 2018-12-11.
