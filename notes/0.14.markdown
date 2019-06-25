@@ -1,0 +1,8 @@
+### Updates
+- Update better-files to 3.8.0. ([#14][#14])
+- Update ciris to 0.12.1. ([#14][#14])
+- Update scala to 2.12.8. ([#14][#14])
+
+[#14]: https://github.com/ovotech/ciris-aiven-kafka/pull/14
+
+Released on 2019-06-25.
