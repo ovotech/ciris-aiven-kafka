@@ -1,5 +1,6 @@
 package ciris.aiven
 
+import cats.effect.Blocker
 import cats.implicits._
 import ciris.ConfigValue
 import java.nio.file.{Files, Path, StandardOpenOption}
@@ -9,18 +10,28 @@ package object kafka {
   final def aivenKafkaSetup(
     clientPrivateKey: ConfigValue[String],
     clientCertificate: ConfigValue[String],
-    serviceCertificate: ConfigValue[String]
+    serviceCertificate: ConfigValue[String],
+    blocker: Blocker
   ): ConfigValue[AivenKafkaSetup] =
     (
       clientPrivateKey.secret.as[ClientPrivateKey],
       clientCertificate.secret.as[ClientCertificate],
       serviceCertificate.secret.as[ServiceCertificate]
-    ).parTupled.flatMap((setupKeyAndTrustStores _).tupled)
+    ).parTupled.flatMap {
+      case (clientPrivateKey, clientCertificate, serviceCertificate) =>
+        setupKeyAndTrustStores(
+          clientPrivateKey = clientPrivateKey,
+          clientCertificate = clientCertificate,
+          serviceCertificate = serviceCertificate,
+          blocker = blocker
+        )
+    }
 
   private[this] final def setupKeyAndTrustStores(
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
-    serviceCertificate: ServiceCertificate
+    serviceCertificate: ServiceCertificate,
+    blocker: Blocker
   ): ConfigValue[AivenKafkaSetup] =
     for {
       setupDetails <- AivenKafkaSetup.createTemporary
@@ -28,12 +39,14 @@ package object kafka {
         clientPrivateKey = clientPrivateKey,
         clientCertificate = clientCertificate,
         keyStoreFile = setupDetails.keyStoreFile,
-        keyStorePassword = setupDetails.keyStorePassword
+        keyStorePassword = setupDetails.keyStorePassword,
+        blocker = blocker
       )
       _ <- setupTrustStore(
         serviceCertificate = serviceCertificate,
         trustStoreFile = setupDetails.trustStoreFile,
-        trustStorePassword = setupDetails.trustStorePassword
+        trustStorePassword = setupDetails.trustStorePassword,
+        blocker = blocker
       )
     } yield setupDetails
 
@@ -41,30 +54,34 @@ package object kafka {
     storeType: String,
     storePath: Path,
     storePasswordChars: Array[Char],
-    setupStore: KeyStore => Unit
+    setupStore: KeyStore => Unit,
+    blocker: Blocker
   ): ConfigValue[Unit] =
-    ConfigValue.suspend {
-      val keyStore = KeyStore.getInstance(storeType)
-      keyStore.load(null, storePasswordChars)
-      setupStore(keyStore)
+    ConfigValue.blockOn(blocker) {
+      ConfigValue.suspend {
+        val keyStore = KeyStore.getInstance(storeType)
+        keyStore.load(null, storePasswordChars)
+        setupStore(keyStore)
 
-      val outputStream =
-        Files.newOutputStream(storePath)
+        val outputStream =
+          Files.newOutputStream(storePath)
 
-      try {
-        keyStore.store(outputStream, storePasswordChars)
-      } finally {
-        outputStream.close()
+        try {
+          keyStore.store(outputStream, storePasswordChars)
+        } finally {
+          outputStream.close()
+        }
+
+        ConfigValue.default(())
       }
-
-      ConfigValue.default(())
     }
 
   private[this] final def setupKeyStore(
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
     keyStoreFile: KeyStoreFile,
-    keyStorePassword: KeyStorePassword
+    keyStorePassword: KeyStorePassword,
+    blocker: Blocker
   ): ConfigValue[Unit] = {
     val keyStorePasswordChars =
       keyStorePassword.value.toCharArray
@@ -80,19 +97,22 @@ package object kafka {
           Array(clientCertificate.value)
         ),
         new KeyStore.PasswordProtection(keyStorePasswordChars)
-      )
+      ),
+      blocker = blocker
     )
   }
 
   private[this] final def setupTrustStore(
     serviceCertificate: ServiceCertificate,
     trustStoreFile: TrustStoreFile,
-    trustStorePassword: TrustStorePassword
+    trustStorePassword: TrustStorePassword,
+    blocker: Blocker
   ): ConfigValue[Unit] =
     setupStore(
       storeType = "JKS",
       storePath = trustStoreFile.path,
       storePasswordChars = trustStorePassword.value.toCharArray,
-      setupStore = _.setCertificateEntry("CA", serviceCertificate.value)
+      setupStore = _.setCertificateEntry("CA", serviceCertificate.value),
+      blocker = blocker
     )
 }

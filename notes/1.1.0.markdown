@@ -1,0 +1,5 @@
+### Changes
+
+- Add `blocker: Blocker` parameter to `aivenKafkaSetup`.
+
+Released on 2019-10-28.
