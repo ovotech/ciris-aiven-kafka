@@ -44,20 +44,20 @@ package object kafka {
     setupStore: KeyStore => Unit
   ): ConfigValue[Unit] =
     ConfigValue.suspend {
-      ConfigValue.default {
-        val keyStore = KeyStore.getInstance(storeType)
-        keyStore.load(null, storePasswordChars)
-        setupStore(keyStore)
+      val keyStore = KeyStore.getInstance(storeType)
+      keyStore.load(null, storePasswordChars)
+      setupStore(keyStore)
 
-        val outputStream =
-          Files.newOutputStream(storePath)
+      val outputStream =
+        Files.newOutputStream(storePath)
 
-        try {
-          keyStore.store(outputStream, storePasswordChars)
-        } finally {
-          outputStream.close()
-        }
+      try {
+        keyStore.store(outputStream, storePasswordChars)
+      } finally {
+        outputStream.close()
       }
+
+      ConfigValue.default(())
     }
 
   private[this] final def setupKeyStore(

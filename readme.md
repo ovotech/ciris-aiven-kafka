@@ -9,7 +9,7 @@ To get started with [sbt](https://www.scala-sbt.org), simply add the following l
 ```scala
 resolvers += Resolver.bintrayRepo("ovotech", "maven")
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "1.0.0"
+libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "1.0.1"
 ```
 
 The library is published for Scala 2.12 and 2.13.

@@ -12,14 +12,17 @@ sealed abstract class TrustStoreFile {
 private[kafka] final object TrustStoreFile {
   final val createTemporary: ConfigValue[TrustStoreFile] =
     ConfigValue.suspend {
+      val _path = {
+        val path = Files.createTempFile("client.truststore-", ".jks")
+        path.toFile.deleteOnExit()
+        Files.delete(path)
+        path
+      }
+
       ConfigValue.default {
         new TrustStoreFile {
-          override final val path: Path = {
-            val path = Files.createTempFile("client.truststore-", ".jks")
-            path.toFile.deleteOnExit()
-            Files.delete(path)
-            path
-          }
+          override final val path: Path =
+            _path
 
           override final def pathAsString: String =
             path.toString

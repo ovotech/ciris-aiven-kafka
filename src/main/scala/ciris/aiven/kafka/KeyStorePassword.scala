@@ -11,10 +11,12 @@ sealed abstract class KeyStorePassword {
 private[kafka] final object KeyStorePassword {
   final val createTemporary: ConfigValue[KeyStorePassword] =
     ConfigValue.suspend {
+      val _value = UUID.randomUUID().toString
+
       ConfigValue.default {
         new KeyStorePassword {
           override final val value: String =
-            UUID.randomUUID().toString
+            _value
 
           override final def toString: String =
             s"KeyStorePassword(${Secret(value).valueShortHash})"

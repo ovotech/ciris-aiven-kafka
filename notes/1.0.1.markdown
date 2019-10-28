@@ -1,0 +1,5 @@
+### Changes
+
+- Ensure side-effects are captured in `suspend` rather than `default`.
+
+Released on 2019-10-28.

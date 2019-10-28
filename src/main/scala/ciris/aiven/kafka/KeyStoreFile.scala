@@ -12,14 +12,17 @@ sealed abstract class KeyStoreFile {
 private[kafka] final object KeyStoreFile {
   final val createTemporary: ConfigValue[KeyStoreFile] =
     ConfigValue.suspend {
+      val _path = {
+        val path = Files.createTempFile("client.keystore-", ".p12")
+        path.toFile.deleteOnExit()
+        Files.delete(path)
+        path
+      }
+
       ConfigValue.default {
         new KeyStoreFile {
-          override final val path: Path = {
-            val path = Files.createTempFile("client.keystore-", ".p12")
-            path.toFile.deleteOnExit()
-            Files.delete(path)
-            path
-          }
+          override final val path: Path =
+            _path
 
           override final def pathAsString: String =
             path.toString
