@@ -6,4 +6,4 @@ scalaVersion := "2.13.1"
 crossScalaVersions := Seq(scalaVersion.value, "2.12.10")
 releaseCrossBuild := true
 
-libraryDependencies += "is.cir" %% "ciris" % "1.0.0"
+libraryDependencies += "is.cir" %% "ciris" % "1.0.2"
