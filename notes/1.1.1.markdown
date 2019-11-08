@@ -1,0 +1,9 @@
+### Changes
+
+- Change to use `parFlatMap` internally, so defaults work as expected with `aivenKafkaSetup`.
+
+### Updates
+
+- Update ciris to 1.0.2.
+
+Released on 2019-11-08.
