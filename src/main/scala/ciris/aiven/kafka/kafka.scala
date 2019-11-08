@@ -17,7 +17,7 @@ package object kafka {
       clientPrivateKey.secret.as[ClientPrivateKey],
       clientCertificate.secret.as[ClientCertificate],
       serviceCertificate.secret.as[ServiceCertificate]
-    ).parTupled.flatMap {
+    ).parTupled.parFlatMap {
       case (clientPrivateKey, clientCertificate, serviceCertificate) =>
         setupKeyAndTrustStores(
           clientPrivateKey = clientPrivateKey,
