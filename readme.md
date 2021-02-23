@@ -16,7 +16,7 @@ The library is published for Scala 2.12 and 2.13.
 
 ### Usage
 
-Simply `import ciris.aiven.kafka._` and use `aivenKafkaSetup` to setup the key and trust stores.
+Simply `import ciris.aiven.kafka._` and use `aivenKafkaSetup` to setup the key and trust stores. Supplied credential strings are expected to be in PKCS 12 format.
 
 ```scala
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
