@@ -3,7 +3,8 @@ package ciris.aiven
 import cats.effect.Blocker
 import cats.implicits._
 import ciris.ConfigValue
-import java.nio.file.{Files, Path, StandardOpenOption}
+
+import java.nio.file.{Files, Path}
 import java.security.KeyStore
 
 package object kafka {
@@ -17,7 +18,7 @@ package object kafka {
       clientPrivateKey.secret.as[ClientPrivateKey],
       clientCertificate.secret.as[ClientCertificate],
       serviceCertificate.secret.as[ServiceCertificate]
-    ).parTupled.parFlatMap {
+    ).parTupled.flatMap {
       case (clientPrivateKey, clientCertificate, serviceCertificate) =>
         setupKeyAndTrustStores(
           clientPrivateKey = clientPrivateKey,
