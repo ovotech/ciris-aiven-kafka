@@ -8,3 +8,5 @@ releaseCrossBuild := true
 libraryDependencies += "is.cir" %% "ciris" % "1.2.1"
 
 publishTo := Some("Artifactory Realm" at "https://kaluza.jfrog.io/artifactory/maven")
+ThisBuild / versionScheme := Some("early-semver")
+
