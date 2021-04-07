@@ -7,7 +7,7 @@
 To get started with [sbt](https://www.scala-sbt.org), simply add the following lines to your `build.sbt` file.
 
 ```scala
-resolvers += Resolver.bintrayRepo("ovotech", "maven")
+resolvers += "Artifactory" at "https://kaluza.jfrog.io/artifactory/maven/"
 
 libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "1.2.1"
 ```
