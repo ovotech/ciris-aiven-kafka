@@ -1,0 +1,9 @@
+### Changes
+
+- Now publishing to the Artifactory repository at https://kaluza.jfrog.io/artifactory/maven, as Bintray is shutting down.
+
+### Updates
+
+- Update sbt to 1.5.0.
+
+Released on 2021-04-06.

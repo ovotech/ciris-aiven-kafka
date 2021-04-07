@@ -1,0 +1,11 @@
+### Changes
+
+- Use sbt-tpolecat for compilation warnings.
+
+### Updates
+
+- Update ciris to 1.2.1.
+- Update Scala versions to 2.13.5, 2.12.13.
+
+
+Released on 2021-02-23.
