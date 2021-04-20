@@ -1,6 +1,5 @@
 package ciris.aiven
 
-import cats.effect.Blocker
 import cats.implicits._
 import ciris.ConfigValue
 
@@ -8,12 +7,11 @@ import java.nio.file.{Files, Path}
 import java.security.KeyStore
 
 package object kafka {
-  final def aivenKafkaSetup(
-    clientPrivateKey: ConfigValue[String],
-    clientCertificate: ConfigValue[String],
-    serviceCertificate: ConfigValue[String],
-    blocker: Blocker
-  ): ConfigValue[AivenKafkaSetup] =
+  final def aivenKafkaSetup[F[_]](
+    clientPrivateKey: ConfigValue[F, String],
+    clientCertificate: ConfigValue[F, String],
+    serviceCertificate: ConfigValue[F, String],
+  ): ConfigValue[F, AivenKafkaSetup] =
     (
       clientPrivateKey.secret.as[ClientPrivateKey],
       clientCertificate.secret.as[ClientCertificate],
@@ -24,16 +22,14 @@ package object kafka {
           clientPrivateKey = clientPrivateKey,
           clientCertificate = clientCertificate,
           serviceCertificate = serviceCertificate,
-          blocker = blocker
         )
     }
 
-  private[this] final def setupKeyAndTrustStores(
+  private[this] final def setupKeyAndTrustStores[F[_]](
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
     serviceCertificate: ServiceCertificate,
-    blocker: Blocker
-  ): ConfigValue[AivenKafkaSetup] =
+  ): ConfigValue[F, AivenKafkaSetup] =
     for {
       setupDetails <- AivenKafkaSetup.createTemporary
       _ <- setupKeyStore(
@@ -41,24 +37,21 @@ package object kafka {
         clientCertificate = clientCertificate,
         keyStoreFile = setupDetails.keyStoreFile,
         keyStorePassword = setupDetails.keyStorePassword,
-        blocker = blocker
       )
       _ <- setupTrustStore(
         serviceCertificate = serviceCertificate,
         trustStoreFile = setupDetails.trustStoreFile,
         trustStorePassword = setupDetails.trustStorePassword,
-        blocker = blocker
       )
     } yield setupDetails
 
-  private[this] final def setupStore(
+  private[this] final def setupStore[F[_]](
     storeType: String,
     storePath: Path,
     storePasswordChars: Array[Char],
     setupStore: KeyStore => Unit,
-    blocker: Blocker
-  ): ConfigValue[Unit] =
-    ConfigValue.blockOn(blocker) {
+  ): ConfigValue[F, Unit] =
+    ConfigValue.blocking {
       ConfigValue.suspend {
         val keyStore = KeyStore.getInstance(storeType)
         keyStore.load(null, storePasswordChars)
@@ -77,13 +70,12 @@ package object kafka {
       }
     }
 
-  private[this] final def setupKeyStore(
+  private[this] final def setupKeyStore[F[_]](
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
     keyStoreFile: KeyStoreFile,
     keyStorePassword: KeyStorePassword,
-    blocker: Blocker
-  ): ConfigValue[Unit] = {
+  ): ConfigValue[F, Unit] = {
     val keyStorePasswordChars =
       keyStorePassword.value.toCharArray
 
@@ -99,21 +91,18 @@ package object kafka {
         ),
         new KeyStore.PasswordProtection(keyStorePasswordChars)
       ),
-      blocker = blocker
     )
   }
 
-  private[this] final def setupTrustStore(
+  private[this] final def setupTrustStore[F[_]](
     serviceCertificate: ServiceCertificate,
     trustStoreFile: TrustStoreFile,
     trustStorePassword: TrustStorePassword,
-    blocker: Blocker
-  ): ConfigValue[Unit] =
+  ): ConfigValue[F, Unit] =
     setupStore(
       storeType = "JKS",
       storePath = trustStoreFile.path,
       storePasswordChars = trustStorePassword.value.toCharArray,
       setupStore = _.setCertificateEntry("CA", serviceCertificate.value),
-      blocker = blocker
     )
 }

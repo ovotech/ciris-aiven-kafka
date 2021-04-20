@@ -9,7 +9,7 @@ sealed abstract class KeyStorePassword {
 }
 
 private[kafka] final object KeyStorePassword {
-  final val createTemporary: ConfigValue[KeyStorePassword] =
+  final def createTemporary[F[_]]: ConfigValue[F, KeyStorePassword] =
     ConfigValue.suspend {
       val _value = UUID.randomUUID().toString
 

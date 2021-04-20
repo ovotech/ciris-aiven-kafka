@@ -10,7 +10,7 @@ sealed abstract class KeyStoreFile {
 }
 
 private[kafka] final object KeyStoreFile {
-  final val createTemporary: ConfigValue[KeyStoreFile] =
+  final def createTemporary[F[_]]: ConfigValue[F, KeyStoreFile] =
     ConfigValue.suspend {
       val _path = {
         val path = Files.createTempFile("client.keystore-", ".p12")
