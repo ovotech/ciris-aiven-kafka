@@ -10,7 +10,7 @@ package object kafka {
   final def aivenKafkaSetup[F[_]](
     clientPrivateKey: ConfigValue[F, String],
     clientCertificate: ConfigValue[F, String],
-    serviceCertificate: ConfigValue[F, String],
+    serviceCertificate: ConfigValue[F, String]
   ): ConfigValue[F, AivenKafkaSetup] =
     (
       clientPrivateKey.secret.as[ClientPrivateKey],
@@ -21,14 +21,14 @@ package object kafka {
         setupKeyAndTrustStores(
           clientPrivateKey = clientPrivateKey,
           clientCertificate = clientCertificate,
-          serviceCertificate = serviceCertificate,
+          serviceCertificate = serviceCertificate
         )
     }
 
   private[this] final def setupKeyAndTrustStores[F[_]](
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
-    serviceCertificate: ServiceCertificate,
+    serviceCertificate: ServiceCertificate
   ): ConfigValue[F, AivenKafkaSetup] =
     for {
       setupDetails <- AivenKafkaSetup.createTemporary
@@ -36,12 +36,12 @@ package object kafka {
         clientPrivateKey = clientPrivateKey,
         clientCertificate = clientCertificate,
         keyStoreFile = setupDetails.keyStoreFile,
-        keyStorePassword = setupDetails.keyStorePassword,
+        keyStorePassword = setupDetails.keyStorePassword
       )
       _ <- setupTrustStore(
         serviceCertificate = serviceCertificate,
         trustStoreFile = setupDetails.trustStoreFile,
-        trustStorePassword = setupDetails.trustStorePassword,
+        trustStorePassword = setupDetails.trustStorePassword
       )
     } yield setupDetails
 
@@ -49,7 +49,7 @@ package object kafka {
     storeType: String,
     storePath: Path,
     storePasswordChars: Array[Char],
-    setupStore: KeyStore => Unit,
+    setupStore: KeyStore => Unit
   ): ConfigValue[F, Unit] =
     ConfigValue.blocking {
       ConfigValue.suspend {
@@ -74,7 +74,7 @@ package object kafka {
     clientPrivateKey: ClientPrivateKey,
     clientCertificate: ClientCertificate,
     keyStoreFile: KeyStoreFile,
-    keyStorePassword: KeyStorePassword,
+    keyStorePassword: KeyStorePassword
   ): ConfigValue[F, Unit] = {
     val keyStorePasswordChars =
       keyStorePassword.value.toCharArray
@@ -90,19 +90,19 @@ package object kafka {
           Array(clientCertificate.value)
         ),
         new KeyStore.PasswordProtection(keyStorePasswordChars)
-      ),
+      )
     )
   }
 
   private[this] final def setupTrustStore[F[_]](
     serviceCertificate: ServiceCertificate,
     trustStoreFile: TrustStoreFile,
-    trustStorePassword: TrustStorePassword,
+    trustStorePassword: TrustStorePassword
   ): ConfigValue[F, Unit] =
     setupStore(
       storeType = "JKS",
       storePath = trustStoreFile.path,
       storePasswordChars = trustStorePassword.value.toCharArray,
-      setupStore = _.setCertificateEntry("CA", serviceCertificate.value),
+      setupStore = _.setCertificateEntry("CA", serviceCertificate.value)
     )
 }
