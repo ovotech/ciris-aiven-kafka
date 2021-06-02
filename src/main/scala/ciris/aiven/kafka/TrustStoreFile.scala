@@ -10,7 +10,7 @@ sealed abstract class TrustStoreFile {
 }
 
 private[kafka] final object TrustStoreFile {
-  final val createTemporary: ConfigValue[TrustStoreFile] =
+  final def createTemporary[F[_]]: ConfigValue[F, TrustStoreFile] =
     ConfigValue.suspend {
       val _path = {
         val path = Files.createTempFile("client.truststore-", ".jks")

@@ -15,12 +15,12 @@ sealed abstract class AivenKafkaSetup {
 }
 
 private[kafka] final object AivenKafkaSetup {
-  final val createTemporary: ConfigValue[AivenKafkaSetup] =
+  final def createTemporary[F[_]]: ConfigValue[F, AivenKafkaSetup] =
     for {
-      _keyStoreFile <- KeyStoreFile.createTemporary
-      _keyStorePassword <- KeyStorePassword.createTemporary
-      _trustStoreFile <- TrustStoreFile.createTemporary
-      _trustStorePassword <- TrustStorePassword.createTemporary
+      _keyStoreFile <- KeyStoreFile.createTemporary[F]
+      _keyStorePassword <- KeyStorePassword.createTemporary[F]
+      _trustStoreFile <- TrustStoreFile.createTemporary[F]
+      _trustStorePassword <- TrustStorePassword.createTemporary[F]
     } yield {
       new AivenKafkaSetup {
         override final val keyStoreFile: KeyStoreFile =
