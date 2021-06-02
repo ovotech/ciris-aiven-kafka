@@ -9,4 +9,3 @@ libraryDependencies += "is.cir" %% "ciris" % "2.0.1"
 
 publishTo := Some("Artifactory Realm" at "https://kaluza.jfrog.io/artifactory/maven")
 ThisBuild / versionScheme := Some("early-semver")
-
