@@ -9,7 +9,7 @@ To get started with [sbt](https://www.scala-sbt.org), simply add the following l
 ```scala
 resolvers += "Artifactory" at "https://kaluza.jfrog.io/artifactory/maven/"
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "1.2.2"
+libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "2.0.0"
 ```
 
 The library is published for Scala 2.12 and 2.13.
@@ -19,21 +19,19 @@ The library is published for Scala 2.12 and 2.13.
 Simply `import ciris.aiven.kafka._` and use `aivenKafkaSetup` to setup the key and trust stores. Supplied credential strings are expected to be in PKCS 12 format.
 
 ```scala
-import cats.effect.{Blocker, ExitCode, IO, IOApp}
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import ciris._
 import ciris.aiven.kafka._
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    Blocker[IO].use { blocker =>
       aivenKafkaSetup(
         clientPrivateKey = env("CLIENT_PRIVATE_KEY"),
         clientCertificate = env("CLIENT_CERTIFICATE"),
-        serviceCertificate = env("SERVICE_CERTIFICATE"),
-        blocker = blocker
+        serviceCertificate = env("SERVICE_CERTIFICATE")
       ).load[IO]
-    }.as(ExitCode.Success)
+    .as(ExitCode.Success)
 }
 ```
 
