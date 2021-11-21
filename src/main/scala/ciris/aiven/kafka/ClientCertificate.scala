@@ -9,7 +9,7 @@ sealed abstract class ClientCertificate {
   def value: Certificate
 }
 
-private[kafka] final object ClientCertificate {
+private[kafka] object ClientCertificate {
   final def apply(clientCertificate: Secret[String]): Option[ClientCertificate] =
     try {
       Some {

@@ -14,7 +14,7 @@ sealed abstract class AivenKafkaSetup {
   def properties: Map[String, String]
 }
 
-private[kafka] final object AivenKafkaSetup {
+private[kafka] object AivenKafkaSetup {
   final def createTemporary[F[_]]: ConfigValue[F, AivenKafkaSetup] =
     for {
       _keyStoreFile <- KeyStoreFile.createTemporary[F]
