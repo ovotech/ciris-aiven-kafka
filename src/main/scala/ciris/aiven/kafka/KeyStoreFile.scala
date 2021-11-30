@@ -9,7 +9,7 @@ sealed abstract class KeyStoreFile {
   def pathAsString: String
 }
 
-private[kafka] final object KeyStoreFile {
+private[kafka] object KeyStoreFile {
   final def createTemporary[F[_]]: ConfigValue[F, KeyStoreFile] =
     ConfigValue.suspend {
       val _path = {
