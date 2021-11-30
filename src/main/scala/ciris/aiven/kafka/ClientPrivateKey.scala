@@ -10,7 +10,7 @@ sealed abstract class ClientPrivateKey {
   def value: PrivateKey
 }
 
-private[kafka] final object ClientPrivateKey {
+private[kafka] object ClientPrivateKey {
   final def apply(clientPrivateKey: Secret[String]): Option[ClientPrivateKey] =
     try {
       Some {

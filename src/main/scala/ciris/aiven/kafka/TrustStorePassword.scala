@@ -8,7 +8,7 @@ sealed abstract class TrustStorePassword {
   def value: String
 }
 
-private[kafka] final object TrustStorePassword {
+private[kafka] object TrustStorePassword {
   final def createTemporary[F[_]]: ConfigValue[F, TrustStorePassword] =
     ConfigValue.suspend {
       val _value = UUID.randomUUID().toString
