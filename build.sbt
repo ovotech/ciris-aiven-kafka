@@ -1,7 +1,7 @@
 organization := "com.ovoenergy"
 licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 
-scalaVersion := "3.1.2"
+scalaVersion := "3.1.3"
 crossScalaVersions := Seq(scalaVersion.value, "2.13.6", "2.12.14")
 releaseCrossBuild := true
 
