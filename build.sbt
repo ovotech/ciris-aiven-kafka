@@ -2,7 +2,7 @@ organization := "com.ovoenergy"
 licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
 
 scalaVersion := "3.1.2"
-crossScalaVersions := Seq(scalaVersion.value, "2.13.6", "2.12.14")
+crossScalaVersions := Seq(scalaVersion.value, "2.13.6", "2.12.17")
 releaseCrossBuild := true
 
 libraryDependencies += "is.cir" %% "ciris" % "2.2.1"
