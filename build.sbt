@@ -5,7 +5,7 @@ scalaVersion := "3.1.2"
 crossScalaVersions := Seq(scalaVersion.value, "2.13.6", "2.12.14")
 releaseCrossBuild := true
 
-libraryDependencies += "is.cir" %% "ciris" % "2.2.1"
+libraryDependencies += "is.cir" %% "ciris" % "2.4.0"
 
 publishTo := Some("Artifactory Realm" at "https://kaluza.jfrog.io/artifactory/maven")
 ThisBuild / versionScheme := Some("early-semver")
