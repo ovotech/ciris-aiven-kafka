@@ -1,9 +1,10 @@
 package ciris.aiven.kafka
 
 import ciris.{ConfigDecoder, Secret}
+
 import java.nio.charset.StandardCharsets
-import java.security.{KeyFactory, NoSuchAlgorithmException, PrivateKey}
 import java.security.spec.{InvalidKeySpecException, PKCS8EncodedKeySpec}
+import java.security.{KeyFactory, NoSuchAlgorithmException, PrivateKey}
 import java.util.Base64
 
 sealed abstract class ClientPrivateKey {
