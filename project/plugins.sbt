@@ -1,2 +1,2 @@
-addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.20")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.1.0")
+addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.4.1")

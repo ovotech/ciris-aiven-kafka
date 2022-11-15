@@ -1,6 +1,7 @@
 package ciris.aiven.kafka
 
 import ciris.ConfigValue
+
 import java.nio.file.{Files, Path}
 
 sealed abstract class TrustStoreFile {

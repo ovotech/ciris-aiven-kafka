@@ -1,6 +1,7 @@
 package ciris.aiven.kafka
 
 import ciris.{ConfigDecoder, Secret}
+
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import java.security.cert.{Certificate, CertificateException, CertificateFactory}

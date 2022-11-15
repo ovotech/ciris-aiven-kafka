@@ -2,6 +2,7 @@ package ciris.aiven.kafka
 
 import cats.implicits._
 import ciris.{ConfigValue, Secret}
+
 import java.util.UUID
 
 sealed abstract class KeyStorePassword {
