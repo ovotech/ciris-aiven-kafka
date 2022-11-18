@@ -9,14 +9,14 @@ To get started with [sbt](https://www.scala-sbt.org), simply add the following l
 ```scala
 resolvers += "Artifactory" at "https://kaluza.jfrog.io/artifactory/maven/"
 
-libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "2.0.0"
+libraryDependencies += "com.ovoenergy" %% "ciris-aiven-kafka" % "3.0.0"
 ```
 
-The library is published for Scala 2.12 and 2.13.
+The library is published for Scala 3.2.x, 2.13.x, and 2.12.x.
 
 ### Usage
 
-Simply `import ciris.aiven.kafka._` and use `aivenKafkaSetup` to setup the key and trust stores. Supplied credential strings are expected to be in PKCS 12 format.
+`import ciris.aiven.kafka._` and use `aivenKafkaSetup` to set up the key and trust stores. Supplied credential strings are expected to be in PKCS 12 format.
 
 ```scala
 import cats.effect.{ExitCode, IO, IOApp}
